@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Juan Pablo Pinedo">
+  <title>Bear-Ninja-Hunter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kablammo&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Bear-Ninja-Hunter</h1>
+    <h4 id="player-outcome-text" class="outcome-text"></h4>
+    <h4 id="computer-outcome-text" class="outcome-text"></h4>
+  </div>
+
+  <script type="text/javascript">
+
+    // First we take the user name from the prompt input and store it in the userName constant
+    const userName = prompt('Welcome to Bear Hunter Nunja. Please enter your name to get started:') || 'Unknown';
+
+    // Then we greet the user by using the name entered before
+    alert(`Hi ${userName}, Let\'s play!!`);
+
+    // We show the prompt so the user can select it's move
+    const userMove = prompt('Who are you: Bear, Ninja or hunter?') || 'nothing';
+
+    // Create a fixed harcoded choice for the computer oponent
+    const computerMove = 'Bear';
+
+    // Store both outcome text to re-use latter 
+    const playerOutcomeText = userName + ', you picked ' + userMove + '!';
+    const computerOutcomeText = 'The computer picked ' + computerMove + '!';
+
+    // Log results to the console
+    console.log(playerOutcomeText); 
+    console.log(computerOutcomeText);
+
+    // place both texts inside the corresponding heading element
+    document.getElementById('player-outcome-text').innerHTML = playerOutcomeText;
+    document.getElementById('computer-outcome-text').innerHTML = computerOutcomeText;
+
+  </script>
+</body>
+
+</html>
