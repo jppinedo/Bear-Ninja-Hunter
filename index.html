@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Juan Pablo Pinedo">
   <title>Bear-Ninja-Hunter</title>
-  <link href="https://fonts.googleapis.com/css2?family=Kablammo&family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 
@@ -14,37 +14,86 @@
 
   <div class="container">
     <h1>Bear-Ninja-Hunter</h1>
-    <h4 id="player-outcome-text" class="outcome-text"></h4>
-    <h4 id="computer-outcome-text" class="outcome-text"></h4>
+    <h4 id="player-outcome-text" class="choice-text"></h4>
+    <h4 id="computer-outcome-text" class="choice-text"></h4>
+    <h4 id="final-outcome-text"></h4>
   </div>
 
   <script type="text/javascript">
 
-    // First we take the user name from the prompt input and store it in the userName constant
-    const userName = prompt('Welcome to Bear Hunter Nunja. Please enter your name to get started:') || 'Unknown';
+    // First we take the user name from the prompt input and store it in the playerName constant
+    const playerName = prompt('Welcome to Bear Hunter Ninja. Please enter your name to get started:') || 'Unknown';
 
     // Then we greet the user by using the name entered before
-    alert(`Hi ${userName}, Let\'s play!!`);
+    alert(`Hi ${playerName}, Let\'s play!!`);
 
     // We show the prompt so the user can select it's move
-    const userMove = prompt('Who are you: Bear, Ninja or hunter?') || 'nothing';
+    const playerChoice = prompt('Who are you: Bear, Ninja or hunter?') || 'nothing';
 
     // Create a fixed harcoded choice for the computer oponent
-    const computerMove = 'Bear';
+    const computerChoice = 'Bear';
+    
+    // Set outcome to Tie and change it latter if there is a winner
+    let outcome = 'Tie';
 
-    // Store both outcome text to re-use latter 
-    const playerOutcomeText = userName + ', you picked ' + userMove + '!';
-    const computerOutcomeText = 'The computer picked ' + computerMove + '!';
+    // If not a tie, determine the winner
+    if(playerChoice !== computerChoice) {
+      switch (playerChoice) {
+        case 'Bear':
+          // Bear wins over Ninja and looses to Hunter
+          outcome = computerChoice === 'Ninja' ? 'User' : 'Computer';
+          break;
+        case 'Ninja':
+          // Ninja wins over Hunter and looses to Bear
+          outcome = computerChoice === 'Hunter' ? 'User' : 'Computer';
+          break;
+        case 'Hunter':
+          // Hunter wins over Bear and looses to Ninja
+          outcome = computerChoice === 'Bear' ? 'User' : 'Computer';
+          break;
+        default:
+          // if not a tie, and no winner, there must be an error
+          outcome = 'Error';
+      }
+    }
+
+    // Store both outcome texts to re-use latter 
+    const playerChoiceText = playerName + ', you chose ' + playerChoice + '!';
+    const computerChoiceText = 'The computer chose ' + computerChoice + '!';
+    
+    // Set final outcome text to empy string
+    let finalOutcomeText = '';
+
+    // Set tie outcome text
+    if(outcome === 'Tie') {
+      finalOutcomeText = 'It\'s a tie!';
+    // Set error outcome text
+    } else if(outcome === 'Error') {
+      finalOutcomeText = 'Invalid choice, please try again!';
+    // Set win/loose outcome text
+    } else {
+      finalOutcomeText = outcome === 'User' ? 'You win!!' : 'You loose :(';
+    }
 
     // Log results to the console
-    console.log(playerOutcomeText); 
-    console.log(computerOutcomeText);
+    console.log(playerChoiceText);
+    console.log(computerChoiceText);
+    console.log(finalOutcomeText);
 
-    // place both texts inside the corresponding heading element
-    document.getElementById('player-outcome-text').innerHTML = playerOutcomeText;
-    document.getElementById('computer-outcome-text').innerHTML = computerOutcomeText;
+    // place both choice texts inside the corresponding heading element
+    document.getElementById('player-outcome-text').innerHTML = playerChoiceText;
+    document.getElementById('computer-outcome-text').innerHTML = computerChoiceText;
+
+    // Store outcome element in a constant for re-use
+    const finalOutcomeElement = document.getElementById('final-outcome-text');
+
+    // Set outcome element text
+    finalOutcomeElement.innerHTML = finalOutcomeText;
+    // Set outcome element classes for CSS styles
+    finalOutcomeElement.className = `${outcome !== 'Error' ? 'neon-text' : 'error-text'} outcome-${outcome.toLowerCase()}`;
+    // Set outcome element data-text attribute for CSS text effect
+    finalOutcomeElement.dataset.text = finalOutcomeText;
 
   </script>
 </body>
-
 </html>
