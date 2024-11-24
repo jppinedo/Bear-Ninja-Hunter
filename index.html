@@ -14,85 +14,204 @@
 
   <div class="container">
     <h1>Bear-Ninja-Hunter</h1>
-    <h4 id="player-outcome-text" class="choice-text"></h4>
-    <h4 id="computer-outcome-text" class="choice-text"></h4>
+
+    <!-- Scores / history table -->
+    <table cellpadding="0" cellspacing="0" id="outcome-table">
+      <thead>
+        <tr>
+          <th>Player</th><th>Computer</th><th>Winner</th>
+        </tr>
+      </thead>
+      <tbody id="outcome-table-body"></tbody>
+    </table>
+
+    <!-- Final outcome text -->
     <h4 id="final-outcome-text"></h4>
   </div>
 
   <script type="text/javascript">
+    let playing = true; // set default state of the program
+    let userInput; // user input set as undefined by default
+    let playerName; // to store the player name
+    const choicesArr = ['bear', 'ninja', 'hunter']; // choices array
+    const outcomes = []; // all history will be stored here
+    const errors = { // stores all error texts
+      invalidEntry: 'Invalid Entry\nPlease Press F5 to Play Again.',
+      nullInput: 'Please Press F5 to Play Again.',
+    }
+    let isError = false; // the error state needs saving
 
-    // First we take the user name from the prompt input and store it in the playerName constant
-    const playerName = prompt('Welcome to Bear Hunter Ninja. Please enter your name to get started:') || 'Unknown';
+    while (playing) {
 
-    // Then we greet the user by using the name entered before
-    alert(`Hi ${playerName}, Let\'s play!!`);
+      // the user canceled the prompt  
+      if(userInput === null) {
+        alert(errors.nullInput); // show error alert
+        playing = false; // stop game
+        isError = true; // save error state
 
-    // We show the prompt so the user can select it's move
-    const playerChoice = prompt('Who are you: Bear, Ninja or hunter?') || 'nothing';
+      // input is empty
+      } else if(userInput?.trim() === '') {
+        alert(errors.invalidEntry); // show error alert
+        playing = false; // stop game
+        isError = true; // save error state
 
-    // Create a fixed harcoded choice for the computer oponent
-    const computerChoice = 'Bear';
-    
-    // Set outcome to Tie and change it latter if there is a winner
-    let outcome = 'Tie';
+      // input is "yes"
+      } else if(userInput?.toLowerCase() === 'yes') {
+        userInput = undefined; // set the user input var to default
 
-    // If not a tie, determine the winner
-    if(playerChoice !== computerChoice) {
-      switch (playerChoice) {
-        case 'Bear':
-          // Bear wins over Ninja and looses to Hunter
-          outcome = computerChoice === 'Ninja' ? 'User' : 'Computer';
-          break;
-        case 'Ninja':
-          // Ninja wins over Hunter and looses to Bear
-          outcome = computerChoice === 'Hunter' ? 'User' : 'Computer';
-          break;
-        case 'Hunter':
-          // Hunter wins over Bear and looses to Ninja
-          outcome = computerChoice === 'Bear' ? 'User' : 'Computer';
-          break;
-        default:
-          // if not a tie, and no winner, there must be an error
-          outcome = 'Error';
+      // input is "no"
+      } else if(userInput?.toLowerCase() === 'no') {
+        playing = false; // stop game
+
+      // the default state, show prompts
+      } else if(userInput === undefined) {
+        // show name prompt
+        if(playerName !== undefined) {
+          userInput = prompt('Who are you: Bear, Ninja or hunter?');
+        // show choice prompt
+        } else {
+          userInput = prompt('Welcome to Bear Hunter Ninja. Please enter your name to get started:');
+        }
+      
+      // name is undefined and user input is not
+      } else if(playerName === undefined) {
+        playerName = userInput; // set the name to user input
+        // Then we greet the user by using the name entered before
+        alert(`Hi ${playerName}, Let\'s play!!`);
+        userInput = undefined; // set the user input var to default
+      
+      // the input is not present in the choices
+      } else if(!choicesArr.includes(userInput.toLocaleLowerCase())) {
+        alert(errors.invalidEntry); // show error
+        playing = false; // stop game
+        isError = true; // save error state
+      
+      // assume is a valid choice
+      } else {
+        
+        // loop to show counter
+        for(let count = 3;count >= 0;count--) {
+          alert(count); // show counter
+          console.log('Countdown: ', count); // log counter
+        }
+
+        // save player choice with forced case
+        const playerChoice = userInput.toLocaleLowerCase();
+
+        // get random index (0, 1 or 2)
+        const index = Math.floor(Math.random() * 3);
+
+        // get computer choice from array by the index
+        const computerChoice = choicesArr[index];
+        
+        // Set outcome to Tie and change it latter if there's a winner
+        let outcome = 'Tie';
+
+        // If not a tie, determine the winner
+        if(playerChoice !== computerChoice) {
+          switch (playerChoice) {
+            case 'bear':
+              // Bear wins over Ninja and looses to Hunter
+              outcome = computerChoice === choicesArr[1] ? 'User' : 'Computer';
+              break;
+            case 'ninja':
+              // Ninja wins over Hunter and looses to Bear
+              outcome = computerChoice === choicesArr[2] ? 'User' : 'Computer';
+              break;
+            case 'hunter':
+              // Hunter wins over Bear and looses to Ninja
+              outcome = computerChoice === choicesArr[0] ? 'User' : 'Computer';
+              break;
+            default:
+              // if not a tie, and no winner, there must be an error
+              outcome = 'Error';
+          }
+        }
+
+        // Store both outcome texts to re-use latter 
+        const playerChoiceText = playerName + ', you chose ' + playerChoice + '!';
+        const computerChoiceText = 'The computer chose ' + computerChoice + '!';
+        
+        // Set final outcome text to empy string
+        let finalOutcomeText = '';
+
+        // Set tie outcome text
+        if(outcome === 'Tie') {
+          finalOutcomeText = 'It\'s a tie!';
+        // Set error outcome text
+        } else if(outcome === 'Error') {
+          finalOutcomeText = 'Invalid choice, please try again!';
+        // Set win/loose outcome text
+        } else {
+          finalOutcomeText = outcome === 'User' ? 'You win!!' : 'You loose :(';
+        }
+
+        // Log results to the console
+        console.log(playerChoiceText);
+        console.log(computerChoiceText);
+        console.log(finalOutcomeText);
+
+        // save the outcome to history
+        outcomes.push({
+          player: playerChoice,
+          computer: computerChoice,
+          outcome
+        });
+
+        // show round outcome
+        alert(`${playerChoiceText}\n${computerChoiceText}\n${finalOutcomeText}`);
+
+        // prompt to play again or leave
+        userInput = prompt(playerName + ', would you like to play again, Yes or No?');
       }
-    }
+      
+    } // while loop end
 
-    // Store both outcome texts to re-use latter 
-    const playerChoiceText = playerName + ', you chose ' + playerChoice + '!';
-    const computerChoiceText = 'The computer chose ' + computerChoice + '!';
-    
-    // Set final outcome text to empy string
-    let finalOutcomeText = '';
-
-    // Set tie outcome text
-    if(outcome === 'Tie') {
-      finalOutcomeText = 'It\'s a tie!';
-    // Set error outcome text
-    } else if(outcome === 'Error') {
-      finalOutcomeText = 'Invalid choice, please try again!';
-    // Set win/loose outcome text
-    } else {
-      finalOutcomeText = outcome === 'User' ? 'You win!!' : 'You loose :(';
-    }
-
-    // Log results to the console
-    console.log(playerChoiceText);
-    console.log(computerChoiceText);
-    console.log(finalOutcomeText);
-
-    // place both choice texts inside the corresponding heading element
-    document.getElementById('player-outcome-text').innerHTML = playerChoiceText;
-    document.getElementById('computer-outcome-text').innerHTML = computerChoiceText;
-
-    // Store outcome element in a constant for re-use
+    // get html elements to show results
     const finalOutcomeElement = document.getElementById('final-outcome-text');
+    const outcomeTable = document.getElementById('outcome-table-body');
 
-    // Set outcome element text
-    finalOutcomeElement.innerHTML = finalOutcomeText;
-    // Set outcome element classes for CSS styles
-    finalOutcomeElement.className = `${outcome !== 'Error' ? 'neon-text' : 'error-text'} outcome-${outcome.toLowerCase()}`;
-    // Set outcome element data-text attribute for CSS text effect
-    finalOutcomeElement.dataset.text = finalOutcomeText;
+    let tableContent = ''; // initialize table content variable
+    
+    // traverse the history and create the table rows
+    outcomes.forEach(curr => {
+      tableContent += `<tr><td>${curr.player}</td><td>${curr.computer}</td><td>${curr.outcome}</td></tr>`;
+    });
+
+    // get win and lose counts
+    const wins = outcomes.filter(session => session.outcome === 'User').length;
+    const loses = outcomes.filter(session => session.outcome === 'Computer').length;
+
+    let endOutcome; // initialize outcome var
+
+    // outcome is tie
+    if(wins === loses) {
+      endOutcome = 'It\'s a tie!';
+    
+    // outcome has a winner
+    } else {
+      endOutcome = wins > loses ? 'You win!!' : 'You loose :(';
+    }
+
+    let endGameText = ''; // initialize end text var
+
+    // no errors and history is not empty
+    if(!isError && outcomes.length) {
+      // set outcome texts
+      endGameText = `<p>The game is over ${playerName}.</p>`;
+      endGameText += `<p>You won ${wins} times and lose ${loses} times.</p>`;
+      endGameText += `</p>${endOutcome}</p>`;
+      // show hidden table
+      document.getElementById('outcome-table').style.display = 'table';
+
+    // is error or history is empty
+    } else {
+      // show refresh to play again message
+      endGameText = '</p>Please Press F5 to Play Again.</p>';
+    }
+    
+    outcomeTable.innerHTML = tableContent; // set table content
+    finalOutcomeElement.innerHTML = endGameText; // set end text
 
   </script>
 </body>
